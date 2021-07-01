@@ -5,6 +5,7 @@ var time = 0.0;
 var tempTime = 0.0;
 var fps = 1000 / 30;
 var uniLocation = new Array();
+var texture = null;
 
 // onload
 window.onload = function () {
@@ -31,6 +32,11 @@ window.onload = function () {
     uniLocation[0] = gl.getUniformLocation(prg, 'time');
     uniLocation[1] = gl.getUniformLocation(prg, 'mouse');
     uniLocation[2] = gl.getUniformLocation(prg, 'resolution');
+    uniLocation[3] = gl.getUniformLocation(prg, "texture");
+
+    // 有効にするテクスチャユニットを指定
+    gl.activeTexture(gl.TEXTURE0);
+    create_texture("disolve.jpg");
 
     // 頂点データ回りの初期化
     var position = [
@@ -39,17 +45,33 @@ window.onload = function () {
         -1.0, -1.0, 0.0,
         1.0, -1.0, 0.0
     ];
+    // テクスチャ座標
+    var textureCoord = [
+        0.0, 0.0,
+        1.0, 0.0,
+        0.0, 1.0,
+        1.0, 1.0
+    ];
+
     var index = [
         0, 2, 1,
         1, 2, 3
     ];
-    var vPosition = create_vbo(position);
-    var vIndex = create_ibo(index);
-    var vAttLocation = gl.getAttribLocation(prg, 'position');
-    gl.bindBuffer(gl.ARRAY_BUFFER, vPosition);
-    gl.enableVertexAttribArray(vAttLocation);
-    gl.vertexAttribPointer(vAttLocation, 3, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vIndex);
+
+    //vbo,ibo
+    var vVbo = new Array();
+    vVbo[0] = create_vbo(position);
+    vVbo[1] = create_vbo(textureCoord);
+    var vIbo = create_ibo(index);
+    var vAttLocation = new Array();
+    vAttLocation[0] = gl.getAttribLocation(prg, 'position');
+    vAttLocation[1] = gl.getAttribLocation(prg, "textureCoord");
+    var vAttStride = new Array();
+    vAttStride[0] = 3;
+    vAttStride[1] = 2;
+
+    set_attribute(vVbo, vAttLocation, vAttStride);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vIbo);
 
     // その他の初期化
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -59,6 +81,62 @@ window.onload = function () {
     // レンダリング関数呼出
     render();
 };
+// レンダリングを行う関数
+function render() {
+    // フラグチェック
+    if (!run) { return; }
+
+    // 時間管理
+    time = (new Date().getTime() - startTime) * 0.001;
+
+    // カラーバッファをクリア
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    // テクスチャをバインドする
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // uniform 関連
+    gl.uniform1f(uniLocation[0], time + tempTime);
+    gl.uniform2fv(uniLocation[1], [mx, my]);
+    gl.uniform2fv(uniLocation[2], [cw, ch]);
+    gl.uniform1i(uniLocation[3], 0);
+
+    // 描画
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+    gl.flush();
+
+    // 再帰
+    setTimeout(render, fps);
+}
+function create_texture(source) {
+    // イメージオブジェクトの生成
+    var img = new Image();
+    img.crossOrigin = "anonymous";
+
+    // データのオンロードをトリガーにする
+    img.onload = function () {
+        // テクスチャオブジェクトの生成
+        var tex = gl.createTexture();
+
+        // テクスチャをバインドする
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+
+        // テクスチャへイメージを適用
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+
+        // ミップマップを生成
+        gl.generateMipmap(gl.TEXTURE_2D);
+
+        // テクスチャのバインドを無効化
+        gl.bindTexture(gl.TEXTURE_2D, null);
+
+        // 生成したテクスチャをグローバル変数に代入
+        texture = tex;
+    };
+
+    // イメージオブジェクトのソースを指定
+    img.src = source;
+}
 
 // IBOを生成する関数
 function create_ibo(data) {
@@ -182,29 +260,7 @@ function create_vbo(data) {
     // 生成した VBO を返して終了
     return vbo;
 }
-// レンダリングを行う関数
-function render() {
-    // フラグチェック
-    if (!run) { return; }
 
-    // 時間管理
-    time = (new Date().getTime() - startTime) * 0.001;
-
-    // カラーバッファをクリア
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // uniform 関連
-    gl.uniform1f(uniLocation[0], time + tempTime);
-    gl.uniform2fv(uniLocation[1], [mx, my]);
-    gl.uniform2fv(uniLocation[2], [cw, ch]);
-
-    // 描画
-    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-    gl.flush();
-
-    // 再帰
-    setTimeout(render, fps);
-}
 
 // checkbox
 function checkChange(e) {
