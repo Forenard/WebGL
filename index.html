@@ -56,26 +56,29 @@
         return f/0.769;
     }
     
-    float pattern( in vec2 p ) {
+    float dwarp( in vec2 p ,float t) {
       vec2 q = vec2(fbm(p + vec2(0.0,0.0)));
       vec2 r = vec2( fbm( p + 4.0*q + vec2(1.7,9.2)));
-      r+= time * 0.15;
-      return clamp(fbm( p + 1.760*r ),0.0,1.0);
+      r+= t * 0.15;
+      return clamp(fbm( p + 1.760*r )*2.0-1.0,-1.0,1.0);
+    }
+
+    vec4 texColor(vec2 s){
+        vec2 inv=(s+vec2(1.0))/2.0;
+        inv.y=1.0-inv.y;
+        return texture2D(texture,inv);
+    }
+
+    vec2 disp(vec2 p){
+        return vec2(-p.y,p.x);
     }
 
     void main(void){
         vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
-        vec4 smpColor = texture2D(texture, tCoord);
-        p *= 4.5;
-  	    float disp = pattern(p);
-        disp=floor(disp*10.0)/10.0;
-  	    vec4 color = vec4(disp*1.2, 0.2, 0.7, 1.);
-        color.a = min(color.r * 0.25, 1.);
-        //vec4 mixcolor=vec4(0.6*disp,0.7*disp,1.4*disp,1.0);
-        //vec4 color=smpColor* mixcolor;
-
-        
-        gl_FragColor = color;
+        float t=time+sin(time);
+        p=disp(p)*dwarp(p*(sin(time/10.0)+1.0),t)+p;
+        p=clamp(p,-1.0,1.0);
+        gl_FragColor = texColor(p);
     }
     </script><!-- /fragment shader -->
 

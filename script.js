@@ -36,7 +36,7 @@ window.onload = function () {
 
     // 有効にするテクスチャユニットを指定
     gl.activeTexture(gl.TEXTURE0);
-    create_texture("disolve.jpg");
+    create_texture("vertical.jpg");
 
     // 頂点データ回りの初期化
     var position = [
