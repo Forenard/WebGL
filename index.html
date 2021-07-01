@@ -68,8 +68,10 @@
         vec4 smpColor = texture2D(texture, tCoord);
         p *= 4.5;
   	    float displacement = pattern(p);
-  	    vec4 color = vec4(displacement * 1.2, 0.2, displacement * 5., 1.);
-        color.a = min(color.r * 0.25, 1.);
+  	    //vec4 color = vec4(displacement * 1.2, 0.2, displacement * 5., 1.);
+        //color.a = min(color.r * 0.25, 1.);
+        vec4 color=vec4(smpColor.rgb*displacement,1);
+        
         gl_FragColor = color;
     }
     </script><!-- /fragment shader -->
