@@ -67,10 +67,13 @@
         vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
         vec4 smpColor = texture2D(texture, tCoord);
         p *= 4.5;
-  	    float displacement = pattern(p);
-  	    //vec4 color = vec4(displacement * 1.2, 0.2, displacement * 5., 1.);
-        //color.a = min(color.r * 0.25, 1.);
-        vec4 color=vec4(smpColor.rgb*displacement,1);
+  	    float disp = pattern(p);
+        disp=floor(disp*10.0)/10.0;
+  	    vec4 color = vec4(disp*1.2, 0.2, 0.7, 1.);
+        color.a = min(color.r * 0.25, 1.);
+        //vec4 mixcolor=vec4(0.6*disp,0.7*disp,1.4*disp,1.0);
+        //vec4 color=smpColor* mixcolor;
+
         
         gl_FragColor = color;
     }
