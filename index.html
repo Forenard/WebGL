@@ -60,7 +60,7 @@
       vec2 q = vec2(fbm(p + vec2(0.0,0.0)));
       vec2 r = vec2( fbm( p + 4.0*q + vec2(1.7,9.2)));
       r+= time * 0.15;
-      return fbm( p + 1.760*r );
+      return clamp(fbm( p + 1.760*r ),0.0,1.0);
     }
 
     void main(void){
