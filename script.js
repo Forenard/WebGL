@@ -10,23 +10,14 @@ var texture = null;
 var stream;
 var recoder;
 var anchor;
+var is_recode_start = false;
+var is_rocoding = false;
+var recoding_time = 1.0;
 
 // onload
 window.onload = function () {
     // canvas エレメントを取得
     c = document.getElementById('canvas');
-
-    //録画
-    stream = c.captureStream();
-    recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
-    anchor = document.getElementById('downloadlink');
-    recorder.ondataavailable = function (e) {
-        var videoBlob = new Blob([e.data], { type: e.data.type });
-        blobUrl = window.URL.createObjectURL(videoBlob);
-        anchor.download = 'movie.webm';
-        anchor.href = blobUrl;
-        anchor.style.display = 'block';
-    }
 
     // canvas サイズ
     cw = 512; ch = 512;
@@ -97,6 +88,22 @@ window.onload = function () {
     // レンダリング関数呼出
     render();
 };
+
+function recode_start() {
+    //録画
+    stream = c.captureStream();
+    recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+    anchor = document.getElementById('downloadlink');
+    recorder.ondataavailable = function (e) {
+        var videoBlob = new Blob([e.data], { type: e.data.type });
+        blobUrl = window.URL.createObjectURL(videoBlob);
+        anchor.download = 'movie.webm';
+        anchor.href = blobUrl;
+        anchor.style.display = 'block';
+    }
+    recode_start = true;
+}
+
 // レンダリングを行う関数
 function render() {
     // フラグチェック
@@ -104,6 +111,18 @@ function render() {
 
     // 時間管理
     time = (new Date().getTime() - startTime) * 0.001;
+
+    //録画
+    if (recode_start) {
+        recorder.start();
+        startTime = new Date().getTime();
+        recode_start = false;
+        is_rocoding = true;
+    }
+    if (is_rocoding && time > recoding_time) {
+        is_rocoding = false;
+        recoder.stop();
+    }
 
     // カラーバッファをクリア
     gl.clear(gl.COLOR_BUFFER_BIT);
