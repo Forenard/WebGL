@@ -92,9 +92,9 @@ window.onload = function () {
 function recode_start() {
     //録画
     stream = c.captureStream();
-    recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+    recoder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
     anchor = document.getElementById('downloadlink');
-    recorder.ondataavailable = function (e) {
+    recoder.ondataavailable = function (e) {
         var videoBlob = new Blob([e.data], { type: e.data.type });
         blobUrl = window.URL.createObjectURL(videoBlob);
         anchor.download = 'movie.webm';
@@ -114,7 +114,7 @@ function render() {
 
     //録画
     if (recode_start) {
-        recorder.start();
+        recoder.start();
         startTime = new Date().getTime();
         recode_start = false;
         is_rocoding = true;
