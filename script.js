@@ -6,17 +6,27 @@ var tempTime = 0.0;
 var fps = 1000 / 30;
 var uniLocation = new Array();
 var texture = null;
-//camera
+//録画
 var stream;
 var recoder;
+var anchor;
 
 // onload
 window.onload = function () {
     // canvas エレメントを取得
     c = document.getElementById('canvas');
 
+    //録画
     stream = c.captureStream();
     recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+    anchor = document.getElementById('downloadlink');
+    recorder.ondataavailable = function (e) {
+        var videoBlob = new Blob([e.data], { type: e.data.type });
+        blobUrl = window.URL.createObjectURL(videoBlob);
+        anchor.download = 'movie.webm';
+        anchor.href = blobUrl;
+        anchor.style.display = 'block';
+    }
 
     // canvas サイズ
     cw = 512; ch = 512;
