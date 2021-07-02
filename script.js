@@ -12,7 +12,7 @@ var recoder;
 var anchor;
 var is_recode_start = false;
 var is_rocoding = false;
-var recoding_time = 1.0;
+var recoding_time = 5.0;
 
 // onload
 window.onload = function () {
@@ -92,7 +92,7 @@ window.onload = function () {
 function recode_start() {
     //録画
     stream = c.captureStream();
-    recoder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+    recoder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 20000000 });
     anchor = document.getElementById('downloadlink');
     recoder.ondataavailable = function (e) {
         var videoBlob = new Blob([e.data], { type: e.data.type });
