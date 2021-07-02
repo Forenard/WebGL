@@ -1,6 +1,10 @@
 <html>
 
 <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style type="text/css">
         html,
         body {
@@ -20,6 +24,7 @@
             text-align: center;
             vertical-align: middle;
             color: white;
+            background-color: black;
         }
     </style><!-- fragment shader -->
     <script id="fs" type="x-shader/x-fragment">precision mediump float;
@@ -134,8 +139,8 @@
 <body>
     <canvas id="canvas"></canvas>
     <p><input type="checkbox" id="check" checked><label for="check"> auto run</label></p>
-    <p><button onclick="recode_start();">動画を作成する</button></p>
-    <p><a href="#" id="downloadlink" style="display:none;">ダウンロード</a></p>
+    <p><button onclick="recode_start();">CreateVideo</button></p>
+    <p><a href="#" id="downloadlink" style="display:none;">DownLoad</a></p>
 </body>
 
 </html>
