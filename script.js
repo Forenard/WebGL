@@ -6,11 +6,17 @@ var tempTime = 0.0;
 var fps = 1000 / 30;
 var uniLocation = new Array();
 var texture = null;
+//camera
+var stream;
+var recoder;
 
 // onload
 window.onload = function () {
     // canvas エレメントを取得
     c = document.getElementById('canvas');
+
+    stream = c.captureStream();
+    recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
 
     // canvas サイズ
     cw = 512; ch = 512;
