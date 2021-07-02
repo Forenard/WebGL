@@ -101,7 +101,7 @@ function recode_start() {
         anchor.href = blobUrl;
         anchor.style.display = 'block';
     }
-    recode_start = true;
+    is_recode_start = true;
 }
 
 // レンダリングを行う関数
@@ -113,10 +113,10 @@ function render() {
     time = (new Date().getTime() - startTime) * 0.001;
 
     //録画
-    if (recode_start) {
+    if (is_recode_start) {
         recoder.start();
         startTime = new Date().getTime();
-        recode_start = false;
+        is_recode_start = false;
         is_rocoding = true;
     }
     if (is_rocoding && time > recoding_time) {
