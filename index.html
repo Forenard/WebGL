@@ -109,7 +109,7 @@
         bool ke=d<.4;
         //gl_FragColor = ke?vec4(color,1.):vec4(1.)*.7;
         color=ke?color:hsb(vec3(.6,.4,p.y));
-        color=distance(p,vec2(.0,.5))<.35?1.-color:color;
+        color=distance(p,vec2(.0,.5))<.25?1.-color:color;
         gl_FragColor =vec4(color,1.);
     }
     </script><!-- /fragment shader -->

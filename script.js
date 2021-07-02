@@ -23,6 +23,18 @@ window.onload = function () {
     cw = 512; ch = 512;
     c.width = cw; c.height = ch;
 
+    //録画
+    stream = c.captureStream();
+    recoder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 20000000 });
+    anchor = document.getElementById('downloadlink');
+    recoder.ondataavailable = function (e) {
+        var videoBlob = new Blob([e.data], { type: e.data.type });
+        blobUrl = window.URL.createObjectURL(videoBlob);
+        anchor.download = 'movie.webm';
+        anchor.href = blobUrl;
+        anchor.style.display = 'block';
+    }
+
     // エレメントを取得
     eCheck = document.getElementById('check');
 
@@ -90,17 +102,6 @@ window.onload = function () {
 };
 
 function recode_start() {
-    //録画
-    stream = c.captureStream();
-    recoder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 20000000 });
-    anchor = document.getElementById('downloadlink');
-    recoder.ondataavailable = function (e) {
-        var videoBlob = new Blob([e.data], { type: e.data.type });
-        blobUrl = window.URL.createObjectURL(videoBlob);
-        anchor.download = 'movie.webm';
-        anchor.href = blobUrl;
-        anchor.style.display = 'block';
-    }
     is_recode_start = true;
 }
 
